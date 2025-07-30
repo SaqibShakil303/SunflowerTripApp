@@ -1,0 +1,22 @@
+# Node modules
+/client/node_modules
+/server/node_modules
+
+# Angular build output
+/server/public
+
+# Environment files
+*.env
+client/src/environments/*.ts
+
+# Logs
+*.log
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode
+
+# npm / yarn lock files (optional, depending on preference)
+# package-lock.json
+# yarn.lock

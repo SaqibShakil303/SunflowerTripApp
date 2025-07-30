@@ -1,0 +1,38 @@
+<div class="navbar">
+  <img class="header-logo" src="assets/hero/logo56.png" alt="Luxury Travel Logo" routerLink="/">
+
+  <!-- Contact Info / Navigation Links -->
+  <div class="contact-info" [ngClass]="{
+      'scrolled': isScrolled,
+      'mobile-hidden': !isMobileNavVisible
+    }">
+    <!-- Mobile Close Button -->
+    <button class="mobile-close-btn" (click)="hideMobileNav()" aria-label="Close navigation">
+      <span class="close-icon">×</span>
+    </button>
+
+    <!-- Navigation Links -->
+    <a href="tel:+913335474551">+91 33 3547 4551</a>
+    <button class="custom-btn" [routerLink]="['/itinerary']"
+      (click)="customizeHoliday(); navigateTo('/itinerary')">Customize My Holiday</button>
+    <ng-container *ngFor="let group of navGroups">
+      <button class="custom-btn nav-btn" 
+        (click)="navigateTo(group.items[0].route, group.items[0].queryParams)">
+        {{ group.label }}
+      </button>
+    </ng-container>
+
+    <ng-container *ngIf="isLoggedIn; else loginSignup">
+      <button class="login logout" (click)="logout()">LOGOUT</button>
+    </ng-container>
+    <ng-template #loginSignup>
+      <a routerLink="/login" class="login" (click)="navigateTo('/login')">LOGIN / SIGNUP</a>
+    </ng-template>
+  </div>
+
+  <!-- Mobile Show Button (appears when nav is hidden) -->
+  <button class="mobile-show-btn" [ngClass]="{'visible': !isMobileNavVisible}" (click)="showMobileNav()"
+    aria-label="Show navigation">
+    <span class="show-icon">☰</span>
+  </button>
+</div>

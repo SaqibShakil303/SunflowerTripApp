@@ -1,0 +1,76 @@
+<div class="auth-wrapper">
+  <div class="auth-container">
+    <div class="navigation-links">
+      <a routerLink="/" class="home-link">
+        <i class="fa fa-home"></i> Home
+      </a>
+      <a routerLink="/login" class="back-link">
+        <i class="fa fa-arrow-left"></i> Back to Login
+      </a>
+    </div>
+
+    <h2 class="auth-title">Create Account</h2>
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="custom-input-container">
+        <input id="email" type="email" [(ngModel)]="email" name="email" required placeholder=" " autocomplete="email">
+        <label for="email" [class.filled]="email">Email</label>
+        <i class="fa fa-envelope input-icon"></i>
+      </div>
+
+      <div class="custom-input-container password-container">
+        <input id="password" [type]="hidePassword ? 'password' : 'text'" [(ngModel)]="password" name="password" required
+          placeholder=" " autocomplete="new-password">
+        <label for="password" [class.filled]="password">Password</label>
+        <button type="button" class="password-toggle-btn" (click)="togglePasswordVisibility()" tabindex="-1">
+          <i class="fa" [ngClass]="hidePassword ? 'fa-eye' : 'fa-eye-slash'"></i>
+        </button>
+      </div>
+
+      <div class="custom-input-container password-container">
+        <input id="confirmPassword" [type]="hidePassword ? 'password' : 'text'" [(ngModel)]="confirmPassword" name="confirmPassword" required
+          placeholder=" " autocomplete="new-password">
+        <label for="confirmPassword" [class.filled]="confirmPassword">Confirm Password</label>
+        <button type="button" class="password-toggle-btn" (click)="togglePasswordVisibility()" tabindex="-1">
+          <i class="fa" [ngClass]="hidePassword ? 'fa-eye' : 'fa-eye-slash'"></i>
+        </button>
+      </div>
+
+      <!-- <div class="custom-input-container">
+        <select id="role" [(ngModel)]="role" name="role" required>
+          <option value="" disabled selected hidden></option>
+          <option value="user">User</option>
+          <option value="manager">Manager</option>
+          <option value="admin">Admin</option>
+        </select>
+        <label for="role" [class.filled]="role">Role</label>
+        <i class="fa fa-user input-icon"></i>
+      </div> -->
+
+      <button type="submit" class="submit-btn">
+        Create Account
+      </button>
+    </form>
+
+    <div class="divider">
+      <!-- <span>or continue with</span> -->
+    </div>
+
+    <!-- <div class="social-login">
+      <button type="button" (click)="googleLogin()" class="google-btn">
+        <i class="fa fa-google"></i>
+        <span>Google</span>
+      </button>
+      
+      <button type="button" (click)="truecallerLogin()" class="truecaller-btn">
+        <i class="fa fa-phone"></i>
+        <span>Truecaller</span>
+      </button>
+    </div> -->
+
+    <div class="login-link">
+      <span>Already have an account?</span>
+      <a routerLink="/login">Login</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,209 @@
+<div class="modal-overlay">
+  <div class="modal-content">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h3 class="modal-title">
+        <i class="fas fa-edit"></i>
+        Edit Location
+      </h3>
+      <button class="btn btn-secondary modal-close" (click)="onCancel()" type="button" aria-label="Close modal">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <form [formGroup]="locationForm" (ngSubmit)="onSubmit()" class="location-form">
+        <!-- Basic Information Section -->
+        <div class="form-section">
+          <h4 class="section-title">
+            <i class="fas fa-info-circle"></i>
+            Basic Information
+          </h4>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name" class="form-label">Location Name *</label>
+              <input
+                type="text"
+                id="name"
+                formControlName="name"
+                class="form-control"
+                [class.error]="isFieldInvalid('name')"
+                placeholder="Enter location name"
+                aria-required="true"
+                aria-describedby="name-error"
+              />
+              <div class="form-help" *ngIf="isLoadingDestinations">
+                <i class="fas fa-spinner fa-spin"></i> Loading data...
+              </div>
+              <div class="error-message" id="name-error" *ngIf="isFieldInvalid('name')">
+                {{ getFieldError('name') }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="destinationId" class="form-label">Destination *</label>
+              <select
+                id="destinationId"
+                formControlName="destinationId"
+                class="form-control"
+                [class.error]="isFieldInvalid('destinationId')"
+                [disabled]="isLoadingDestinations"
+                aria-required="true"
+                aria-describedby="destinationId-error"
+              >
+                <option value="" disabled selected>Select a destination</option>
+                <option *ngFor="let dest of destinations" [value]="dest.id">
+                  {{ dest.title }}
+                </option>
+              </select>
+              <div class="error-message" id="destinationId-error" *ngIf="isFieldInvalid('destinationId')">
+                {{ getFieldError('destinationId') }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description" class="form-label">Description *</label>
+            <textarea
+              id="description"
+              formControlName="description"
+              class="form-control form-textarea"
+              [class.error]="isFieldInvalid('description')"
+              placeholder="Describe the location..."
+              rows="4"
+              aria-required="true"
+              aria-describedby="description-error description-help"
+            ></textarea>
+            <div class="form-help" id="description-help">
+              {{ locationForm.get('description')?.value?.length || 0 }}/500 characters
+            </div>
+            <div class="error-message" id="description-error" *ngIf="isFieldInvalid('description')">
+              {{ getFieldError('description') }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Image Section -->
+        <div class="form-section">
+          <h4 class="section-title">
+            <i class="fas fa-image"></i>
+            Image
+          </h4>
+
+          <div class="form-group">
+            <label class="form-label">Image Input Type</label>
+            <div class="image-type-toggle">
+              <button
+                type="button"
+                class="btn btn-sm"
+                [class.btn-primary]="imageInputType === 'file'"
+                [class.btn-secondary]="imageInputType !== 'file'"
+                (click)="setImageInputType('file')"
+                aria-label="Select image upload by file"
+              >
+                Upload File
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm"
+                [class.btn-primary]="imageInputType === 'url'"
+                [class.btn-secondary]="imageInputType !== 'url'"
+                (click)="setImageInputType('url')"
+                aria-label="Select image input by URL"
+              >
+                Enter URL
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group" *ngIf="imageInputType === 'file'">
+            <label for="imageFile" class="form-label">Select Image (PNG, JPG, JPEG, WEBP)</label>
+            <input
+              type="file"
+              id="imageFile"
+              class="form-control"
+              accept="image/png,image/jpeg,image/jpg,image/webp"
+              (change)="onImageFileChange($event)"
+              [class.error]="isFieldInvalid('imageFile')"
+              aria-describedby="imageFile-error imageFile-help"
+            />
+            <div class="form-help" id="imageFile-help">Select a PNG, JPG, JPEG or WEBP image to replace the current image (max 5MB)</div>
+            <div class="error-message" id="imageFile-error" *ngIf="isFieldInvalid('imageFile')">
+              {{ getFieldError('imageFile') }}
+            </div>
+            <div class="image-preview" *ngIf="imagePreview">
+              <img [src]="imagePreview" alt="Image preview" class="preview-image" />
+            </div>
+            <div class="form-help" *ngIf="!imagePreview">
+              No image selected or available
+            </div>
+          </div>
+
+          <div class="form-group" *ngIf="imageInputType === 'url'">
+            <label for="imageUrl" class="form-label">Image URL</label>
+            <input
+              type="text"
+              id="imageUrl"
+              formControlName="imageUrl"
+              class="form-control"
+              [class.error]="isFieldInvalid('imageUrl')"
+              placeholder="Enter image URL"
+              (input)="onImageUrlChange($event)"
+              aria-describedby="imageUrl-error imageUrl-help"
+            />
+            <div class="form-help" id="imageUrl-help">Enter a valid image URL (e.g., https://example.com/image.jpg)</div>
+            <div class="error-message" id="imageUrl-error" *ngIf="isFieldInvalid('imageUrl')">
+              {{ getFieldError('imageUrl') }}
+            </div>
+            <div class="image-preview" *ngIf="imagePreview">
+              <img [src]="imagePreview" alt="Image preview" class="preview-image" />
+            </div>
+            <div class="form-help" *ngIf="!imagePreview">
+              No image selected or available
+            </div>
+          </div>
+        </div>
+
+        <!-- 360 View Section -->
+        <div class="form-section">
+          <h4 class="section-title">
+            <i class="fas fa-globe"></i>
+            360° View
+          </h4>
+
+          <div class="form-group">
+            <label for="iframe360" class="form-label">360° View URL *</label>
+            <input
+              type="text"
+              id="iframe360"
+              formControlName="iframe360"
+              class="form-control"
+              [class.error]="isFieldInvalid('iframe360')"
+              placeholder="Enter 360° view embed URL"
+              aria-required="true"
+              aria-describedby="iframe360-error iframe360-help"
+            />
+            <div class="form-help" id="iframe360-help">Enter a valid embed URL (e.g., Airpano, Google Maps)</div>
+            <div class="error-message" id="iframe360-error" *ngIf="isFieldInvalid('iframe360')">
+              {{ getFieldError('iframe360') }}
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSubmitting" aria-label="Cancel">
+        Cancel
+      </button>
+      <button type="submit" class="btn btn-primary" (click)="onSubmit()" [disabled]="isSubmitting" aria-label="Save changes">
+        <i class="fas fa-spinner fa-spin" *ngIf="isSubmitting"></i>
+        <i class="fas fa-save" *ngIf="!isSubmitting"></i>
+        {{ isSubmitting ? 'Saving...' : 'Save Changes' }}
+      </button>
+    </div>
+  </div>
+</div>
