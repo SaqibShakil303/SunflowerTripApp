@@ -1,10 +1,11 @@
 {
-  "name": "SunflowerTripApp",
+  "name": "sunflowertripapp",
   "scripts": {
     "install-all": "cd client && npm install && cd ../server && npm install",
     "build": "cd client && ng build --configuration production",
-    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "concurrently  \"npm run client\" \"npm run server\"",
     "server": "cd server && npm start",
+    "dev": "concurrently \"npm run server\" \"npm run client:serve\"",
     "client": "cd client && ng serve"
   },
   "devDependencies": {

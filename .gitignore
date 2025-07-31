@@ -8,7 +8,7 @@
 # Environment files
 *.env
 client/src/environments/*.ts
-
+/node_modules
 # Logs
 *.log
 

@@ -32,7 +32,7 @@
             "allowedCommonJsDependencies": ["aos","form-data",
               "proxy-from-env",
               "follow-redirects"],
-            "outputPath": "dist/sunflowertrip",
+            "outputPath": "../server/public",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
