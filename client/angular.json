@@ -33,6 +33,7 @@
               "proxy-from-env",
               "follow-redirects"],
             "outputPath": "../server/public",
+            
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [

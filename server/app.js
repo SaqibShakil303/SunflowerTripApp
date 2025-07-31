@@ -3,8 +3,9 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const fs = require('fs');
-
+const { renderModule } = require('@angular/platform-server');
+const fs = require('fs').promises;
+const AppServerModule = require('../client/dist/sunflowertrip/server/main.js').AppServerModule;
 // ROUTES
 const contactRoutes = require('./routes/contact');
 const settingRoutes = require('./routes/setting');
@@ -32,10 +33,27 @@ const userRoutes = require('./routes/userRoutes');
 (async () => {
   const app = express();
 
-   // CORS & Body Parsers
-  app.use(cors({ origin: 'http://localhost:4200' }));
-  app.use(express.json({ limit: '100mb' }));
-  app.use(express.urlencoded({ extended: true, limit: '100mb' }));
+// CORS configuration
+const allowedOrigins = [
+  'http://localhost:4200',
+  'https://sunflowertrip.in',
+  process.env.RAILWAY_URL || 'http://localhost:3000'
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
+
+// Body parsers
+app.use(express.json({ limit: '100mb' }));
+app.use(express.urlencoded({ extended: true, limit: '100mb' }));
 
 // ✅ API ROUTES
   app.use('/api/auth', authRoutes);
@@ -63,17 +81,25 @@ const userRoutes = require('./routes/userRoutes');
     res.status(200).json({ status: 'OK' });
   });
 
-   // ✅ Serve Angular App Only If index.html Exists
-  const angularIndexPath = path.join(__dirname, 'public/index.html');
-  if (fs.existsSync(angularIndexPath)) {
-    app.use(express.static(path.join(__dirname, 'public')));
+  // Serve Angular static files
+app.use(express.static(path.join(__dirname, 'public')));
 
-    app.get('*', (req, res) => {
-      res.sendFile(angularIndexPath);
+
+// SSR rendering for all non-API routes
+app.get(/^(?!\/api).*/, async (req, res) => {
+  try {
+    const indexHtml = await fs.readFile(path.join(__dirname, 'public/index.html'), 'utf8');
+    const { html } = await renderModule(AppServerModule, {
+      document: indexHtml,
+      url: req.url
     });
-  } else {
-    console.warn('⚠️ Angular build not found. Skipping static file serving.');
+    res.send(html);
+  } catch (err) {
+    console.error('SSR Error:', err);
+    res.status(500).send('Server Error');
   }
+});
+
 
   app.use((err, _, res, __) => {
     console.error(err);
